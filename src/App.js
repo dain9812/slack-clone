@@ -24,7 +24,10 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Main />} />
+      <Route
+        path="/"
+        element={currentUser ? <Main /> : <Navigate to="/login" />}
+      />
       <Route path="/login" element={<Login />} />
       <Route
         path="/join"
