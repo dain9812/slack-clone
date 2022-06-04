@@ -24,12 +24,17 @@ import {
   ref,
   update,
 } from "@firebase/database";
+import { useDispatch } from "react-redux";
+import { setCurrentChannel } from "../store/channelReducer";
 
 const ChannelMenu = () => {
   const [open, setOpen] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDetail, setChannelDetail] = useState("");
   const [channels, setChannels] = useState([]);
+  const [activeChannelId, setActiveChannelId] = useState("");
+  const [firstLoaded, setFirstLoaded] = useState(true);
+  const dispatch = useDispatch();
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -45,6 +50,11 @@ const ChannelMenu = () => {
       unsubscribe();
     };
   }, []);
+
+  const changeChannel = (channel) => {
+    setActiveChannelId(channel.id);
+    dispatch(setCurrentChannel(channel));
+  };
 
   const handleSubmit = useCallback(async () => {
     const db = getDatabase();
@@ -67,6 +77,14 @@ const ChannelMenu = () => {
     }
   }, [channelDetail, channelName]);
 
+  useEffect(() => {
+    if (channels.length > 0 && firstLoaded) {
+      setActiveChannelId(channels[0].id);
+      dispatch(setCurrentChannel(channels[0]));
+      setFirstLoaded(false);
+    }
+  }, [channels, dispatch, firstLoaded]);
+
   return (
     <>
       <List sx={{ overflow: "auto", width: 240, backgroundColor: "#4c3c4c" }}>
@@ -87,7 +105,12 @@ const ChannelMenu = () => {
         </ListItem>
         <List component="div" disablePadding sx={{ pl: 3 }}>
           {channels.map((channel) => (
-            <ListItem button key={channel.id}>
+            <ListItem
+              button
+              selected={channel.id === activeChannelId}
+              onClick={() => changeChannel(channel)}
+              key={channel.id}
+            >
               <ListItemText
                 primary={`# ${channel.name}`}
                 sx={{ wordBreak: "break-all", color: "#918890" }}
