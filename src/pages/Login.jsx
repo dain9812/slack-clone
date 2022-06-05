@@ -13,26 +13,13 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useCallback } from "react";
 
 const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-
-    if (!email || !password) {
-      setError("모든 항목을 입력해주세요");
-      return;
-    }
-
-    loginUser(email, password);
-  };
-
-  const loginUser = async (email, password) => {
+  const loginUser = useCallback(async (email, password) => {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(getAuth(), email, password);
@@ -40,7 +27,24 @@ const Login = () => {
       setError(e.message);
       setLoading(false);
     }
-  };
+  }, []);
+
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const email = data.get("email");
+      const password = data.get("password");
+
+      if (!email || !password) {
+        setError("모든 항목을 입력해주세요");
+        return;
+      }
+
+      loginUser(email, password);
+    },
+    [loginUser]
+  );
 
   useEffect(() => {
     if (!error) return;

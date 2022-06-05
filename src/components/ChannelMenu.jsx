@@ -35,8 +35,6 @@ const ChannelMenu = () => {
   const [activeChannelId, setActiveChannelId] = useState("");
   const [firstLoaded, setFirstLoaded] = useState(true);
   const dispatch = useDispatch();
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     const unsubscribe = onChildAdded(
@@ -51,10 +49,28 @@ const ChannelMenu = () => {
     };
   }, []);
 
-  const changeChannel = (channel) => {
-    setActiveChannelId(channel.id);
-    dispatch(setCurrentChannel(channel));
-  };
+  const changeChannel = useCallback(
+    (channel) => {
+      if (channel.id === activeChannelId) return;
+      setActiveChannelId(channel.id);
+      dispatch(setCurrentChannel(channel));
+    },
+    [activeChannelId, dispatch]
+  );
+
+  const handleClickOpen = useCallback(() => setOpen(true), []);
+
+  const handleClose = useCallback(() => setOpen(false), []);
+
+  const handleChangeChannelName = useCallback(
+    (e) => setChannelName(e.target.value),
+    []
+  );
+
+  const handleChangeChannelDetail = useCallback(
+    (e) => setChannelDetail(e.target.value),
+    []
+  );
 
   const handleSubmit = useCallback(async () => {
     const db = getDatabase();
@@ -75,7 +91,7 @@ const ChannelMenu = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [channelDetail, channelName]);
+  }, [channelDetail, channelName, handleClose]);
 
   useEffect(() => {
     if (channels.length > 0 && firstLoaded) {
@@ -132,7 +148,8 @@ const ChannelMenu = () => {
             type="text"
             fullWidth
             variant="standard"
-            onChange={(e) => setChannelName(e.target.value)}
+            onChange={handleChangeChannelName}
+            autoComplete="off"
           />
           <TextField
             margin="dense"
@@ -140,7 +157,8 @@ const ChannelMenu = () => {
             type="text"
             fullWidth
             variant="standard"
-            onChange={(e) => setChannelDetail(e.target.value)}
+            onChange={handleChangeChannelDetail}
+            autoComplete="off"
           />
         </DialogContent>
         <DialogActions>
