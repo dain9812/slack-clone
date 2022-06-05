@@ -54,6 +54,7 @@ const ChannelMenu = () => {
       if (channel.id === activeChannelId) return;
       setActiveChannelId(channel.id);
       dispatch(setCurrentChannel(channel));
+      console.log(channel);
     },
     [activeChannelId, dispatch]
   );
