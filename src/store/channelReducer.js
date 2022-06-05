@@ -11,7 +11,7 @@ const channelReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_CURRENT_CHANNEL:
       return {
-        currentChannel: action.currentChannel,
+        currentChannel: action.setCurrentChannel,
       };
     default:
       return state;
