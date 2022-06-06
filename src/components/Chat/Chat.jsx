@@ -1,11 +1,56 @@
 import { Divider, Grid, List, Paper, Toolbar } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
+import "../../firebase";
+import {
+  child,
+  get,
+  getDatabase,
+  onChildAdded,
+  orderByChild,
+  query,
+  ref,
+  startAt,
+} from "firebase/database";
 
 const Chat = () => {
-  const { channel } = useSelector((state) => state);
+  const { channel, user } = useSelector((state) => state);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (!channel.currentChannel) return;
+    const getMessages = async () => {
+      const snapShot = await get(
+        child(ref(getDatabase()), "messages/" + channel.currentChannel.id)
+      );
+      setMessages(snapShot.val() ? Object.values(snapShot.val()) : []);
+    };
+    getMessages();
+    return () => {
+      setMessages([]);
+    };
+  }, [channel.currentChannel]);
+
+  useEffect(() => {
+    if (!channel.currentChannel) return;
+    const sorted = query(
+      ref(getDatabase(), "messages/" + channel.currentChannel.id),
+      orderByChild("timestamp")
+    );
+    // 해당 db에 데이터가 추가되면 이벤트를 가질 수 있음
+    const unsubscribe = onChildAdded(
+      // 현재 시점으로 추가된 것들만 콜백을 받음
+      query(sorted, startAt(Date.now())),
+      (snapshot) =>
+        setMessages((oldMessages) => [...oldMessages, snapshot.val()])
+    );
+    return () => {
+      unsubscribe?.();
+    };
+  }, [channel.currentChannel]);
 
   return (
     <>
@@ -25,8 +70,13 @@ const Chat = () => {
             position: "relative",
           }}
         >
-          {/* 채팅메세지 */}
-          <ChatMessage />
+          {messages.map((message) => (
+            <ChatMessage
+              key={message.timestamp}
+              message={message}
+              user={user}
+            />
+          ))}
         </List>
         <Divider />
         <ChatInput />
