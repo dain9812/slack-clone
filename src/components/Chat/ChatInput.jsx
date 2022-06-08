@@ -1,4 +1,10 @@
-import { Grid, IconButton, InputAdornment, TextField } from "@mui/material";
+import {
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+  LinearProgress,
+} from "@mui/material";
 import InsertEmotionIcon from "@mui/icons-material/InsertEmoticon";
 import ImageIcon from "@mui/icons-material/Image";
 import SendIcon from "@mui/icons-material/Send";
@@ -14,12 +20,19 @@ import {
 import { useSelector } from "react-redux";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
+import ImageModal from "../Modal/ImageModal";
 
 const ChatInput = () => {
   const { channel, user } = useSelector((state) => state);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [percent, setPercent] = useState(0);
+
+  const handleClickOpen = useCallback(() => setImageModalOpen(true), []);
+  const handleClickClose = useCallback(() => setImageModalOpen(false), []);
 
   const handleTogglePicker = useCallback(
     () => setShowEmoji((show) => !show),
@@ -90,7 +103,7 @@ const ChatInput = () => {
                 <IconButton onClick={handleTogglePicker}>
                   <InsertEmotionIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={handleClickOpen}>
                   <ImageIcon />
                 </IconButton>
               </InputAdornment>
@@ -108,6 +121,17 @@ const ChatInput = () => {
           autoComplete="off"
           value={message}
           onChange={handleChange}
+        />
+        {uploading ? (
+          <Grid item xs={12} sx={{ m: "10px" }}>
+            <LinearProgress variant="determinate" value={percent} />
+          </Grid>
+        ) : null}
+        <ImageModal
+          open={imageModalOpen}
+          handleClose={handleClickClose}
+          setPercent={setPercent}
+          setUploading={setUploading}
         />
       </Grid>
     </Grid>
