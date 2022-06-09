@@ -14,16 +14,30 @@ import { useState } from "react";
 import "../firebase";
 import { getAuth, signOut } from "@firebase/auth";
 import { useCallback } from "react";
+import ProfileModal from "./Modal/ProfileModal";
 
 const Header = () => {
   const { user } = useSelector((state) => state);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
   const handleOpenMenu = useCallback((event) => {
     setAnchorEl(event.currentTarget);
   }, []);
+
   const handleCloseMenu = useCallback(() => setAnchorEl(null), []);
+
   const handleLogout = useCallback(async () => {
     await signOut(getAuth());
+  }, []);
+
+  const handleClickOpen = useCallback(() => {
+    setShowProfileModal(true);
+    handleCloseMenu();
+  }, [handleCloseMenu]);
+
+  const handleCloseProfileModal = useCallback(() => {
+    setShowProfileModal(false);
   }, []);
 
   return (
@@ -72,7 +86,7 @@ const Header = () => {
               onClose={handleCloseMenu}
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <MenuItem>
+              <MenuItem onClick={handleClickOpen}>
                 <Typography textAlign="center">프로필이미지</Typography>
               </MenuItem>
               <MenuItem onClick={handleLogout}>
@@ -82,6 +96,10 @@ const Header = () => {
           </Box>
         </Toolbar>
       </AppBar>
+      <ProfileModal
+        open={showProfileModal}
+        handleClose={handleCloseProfileModal}
+      />
     </>
   );
 };
