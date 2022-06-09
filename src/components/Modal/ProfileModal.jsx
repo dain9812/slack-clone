@@ -70,9 +70,9 @@ const ProfileModal = ({ open, handleClose }) => {
       await updateProfile(user.currentUser, {
         photoURL: uploadedCroppedImage,
       });
-      const newData = { avatar: uploadedCroppedImage };
       const updates = {};
-      updates["/users/" + user.currentUser.uid] = newData;
+      updates["/users/" + user.currentUser.uid + "/avatar"] =
+        uploadedCroppedImage;
       await update(ref(getDatabase()), updates);
       closeModal();
     };
