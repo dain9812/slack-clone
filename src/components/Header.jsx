@@ -17,7 +17,7 @@ import { useCallback } from "react";
 import ProfileModal from "./Modal/ProfileModal";
 
 const Header = () => {
-  const { user } = useSelector((state) => state);
+  const { user, theme } = useSelector((state) => state);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -47,7 +47,7 @@ const Header = () => {
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           color: "#9a939b",
-          backgroundColor: "#4c3c4e",
+          backgroundColor: theme.mainTheme,
         }}
       >
         <Toolbar

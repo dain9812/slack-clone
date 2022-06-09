@@ -3,10 +3,13 @@ import ChannelMenu from "../components/Menu/ChannelMenu";
 import Chat from "../components/Chat/Chat";
 import Header from "../components/Header";
 import ThemeMenu from "../components/Menu/ThemeMenu";
+import { useSelector } from "react-redux";
 
 const Main = () => {
+  const { theme } = useSelector((state) => state);
+
   return (
-    <Box sx={{ display: "flex", backgroundColor: "white" }}>
+    <Box sx={{ display: "flex", backgroundColor: theme.subTheme }}>
       <Header />
       <Drawer variant="permanent" sx={{ width: 300 }} className="no-scroll">
         <Toolbar />

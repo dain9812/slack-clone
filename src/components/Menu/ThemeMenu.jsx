@@ -21,10 +21,12 @@ import {
   ref,
   update,
 } from "firebase/database";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setTheme } from "../../store/themeReducer";
 
 const ThemeMenu = () => {
   const { user } = useSelector((state) => state);
+  const dispatch = useDispatch();
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [mainTheme, setMainTheme] = useState("#ffffff");
   const [subTheme, setSubTheme] = useState("#ffffff");
@@ -75,7 +77,12 @@ const ThemeMenu = () => {
         </ListItem>
         {userTheme.map((theme, i) => (
           <ListItem key={i}>
-            <div className="theme-box">
+            <div
+              className="theme-box"
+              onClick={() =>
+                dispatch(setTheme(theme.mainTheme, theme.subTheme))
+              }
+            >
               <div
                 className="theme-main"
                 style={{ backgroundColor: theme.mainTheme }}
