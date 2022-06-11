@@ -71,7 +71,7 @@ const ProfileModal = ({ open, handleClose }) => {
         photoURL: uploadedCroppedImage,
       });
       const updates = {};
-      updates["/users/" + user.currentUser.uid + "/avatar"] =
+      updates["users/" + user.currentUser.uid + "/avatar"] =
         uploadedCroppedImage;
       await update(ref(getDatabase()), updates);
       closeModal();

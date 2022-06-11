@@ -83,7 +83,7 @@ const ChannelMenu = () => {
       details: channelDetail,
     };
     const updates = {};
-    updates["/channels/" + key] = newChannel;
+    updates["channels/" + key] = newChannel;
 
     try {
       await update(ref(db), updates);

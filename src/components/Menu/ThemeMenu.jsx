@@ -41,11 +41,11 @@ const ThemeMenu = () => {
     try {
       const db = getDatabase();
       const key = push(
-        child(ref(db), "/users/" + user.currentUser.uid + "/theme")
+        child(ref(db), "users/" + user.currentUser.uid + "/theme")
       ).key;
       const newTheme = { mainTheme, subTheme };
       const updates = {};
-      updates["/users/" + user.currentUser.uid + "/theme/" + key] = newTheme;
+      updates["users/" + user.currentUser.uid + "/theme/" + key] = newTheme;
       await update(ref(db), updates);
       handleClickClose();
     } catch (error) {
